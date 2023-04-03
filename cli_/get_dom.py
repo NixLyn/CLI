@@ -72,9 +72,11 @@ class The_Doms_():
     # ! GoBuster -> URI_
     def buster_(self, uri_, prof_dir):
         try:
-            l_dir = prof_dir+f"/busts_{uri}"
+            l_dir = prof_dir+f"/busts_{uri_}/"
             self.FM.make_dir(l_dir)
-            local_ = prof_dir+f"/busts_{uri}/subs.csv"
+            n_dir = prof_dir+f"/busts_{uri_}/sub_busts/"
+            self.FM.make_dir(n_dir)
+            local_ = prof_dir+f"/busts_{uri_}/sub_busts/subs.csv"
             self.FM.write_file(local_, "", "", "w+")
             if "https" not in uri_:
                 to_run = f"gobuster dir -u https://{uri_} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt > {local_}"
@@ -133,19 +135,22 @@ class The_Doms_():
 
             for j, sub_ in enumerate(sub_list):
                 to_req = "https://"+str(sub_)
-                print(f"~[{j}]:[{to_req}]")
+                print(f"\n~[{j}]:[{to_req}]")
                 # ? DO A GET REQUEST TO TEST ACTIVITY
                 try:
                     r = requests.get(to_req, timeout=5)
                     if r:
-                        print(f"[RET_]:[{str(r)}]")
-                    if "200" in r or "201" in r:
-                        print(f"[ADDING]:[{sub_}]:[TO ACTIVE LIST]")
-                        ret_list.append(str(sub_))
+                        print(f"~[RET_]:[{str(r)}]")
+                        if "200" in str(r) or "201" in str(r):
+                            print(f"[ADDING]:[{sub_}]:[TO ACTIVE LIST]")
+                            ret_list.append(str(sub_))
+                        else:
+                            print("[NOT_ACTIVE]")
                 except Exception as e:
                     print(f"[-]:[REQUEST_FAILED]:[{str(e)}]")
 
-                time.sleep(0.5)
+            time.sleep(0.5)
+            print(f"\n[TOTAL ACTIVE SUBS FOUND]:[{str(len(ret_list))}]\n")
             if len(ret_list) > 1:
                 print(f"[LOOKS LIKE WE HAVE FILTERED OUT ALL ACTIVE SUB_DOMAINS]")
             else:
@@ -202,9 +207,21 @@ class The_Doms_():
                 tot_i = int(tot_)
                 print(f"[THAT TOOK]:[{str(tot_i)} seconds]")
                 if da_subs:
+                    t_1 = time.time()
                     print("[LET'S SEE WHAT WE FOUND]:")
                     subs_list = da_subs.split("\n")
                     clean_subs = self.check_sub_act(subs_list)
+                    print(f"[NOW LET'S SAVE THEM TO THE PROFILE]")
+                    fi_name = prof_dir+"/subs_.csv"
+                    self.FM.write_file(fi_name, clean_subs, ",", "w+")
+                    print("[GREAT]\n[NOW WE CAN RUN 'GOBUSTER' ON EACH ONE :D ]\n[(cause i'm crazy like that)]")
+                    cont_ = input("[CONTINUE..?]")
+                    self.da_subs_buster(clean_subs, prof_dir)
+                    t_2 = time.time()
+                    tot_ = t_2 - t_1
+                    tot_i = int(tot_)
+                    print(f"[THAT TOOK]:[{str(tot_i)} seconds]")
+
                     return clean_subs
                 else:
                     print("** [LAB_FIRE]:[NO SUBS FOUND] **")
