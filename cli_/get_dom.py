@@ -132,14 +132,24 @@ class The_Doms_():
             re_ = input("[CONTINUE..?]")
 
             for j, sub_ in enumerate(sub_list):
-                print(f"~[{j}]:[{str(sub_)}]")
+                to_req = "https://"+str(sub_)
+                print(f"~[{j}]:[{to_req}]")
                 # ? DO A GET REQUEST TO TEST ACTIVITY
-                r = requests.get(str(sub_))
-                time.sleep(1)
-                if r:
-                    print(f"[RET_]:[{str(r)}]")
-                    ret_list.append(str(sub_))
-            print(f"[LOOKS LIKE WE HAVE FILTERED OUT ALL ACTIVE SUB_DOMAINS]")
+                try:
+                    r = requests.get(to_req, timeout=5)
+                    if r:
+                        print(f"[RET_]:[{str(r)}]")
+                    if "200" in r or "201" in r:
+                        print(f"[ADDING]:[{sub_}]:[TO ACTIVE LIST]")
+                        ret_list.append(str(sub_))
+                except Exception as e:
+                    print(f"[-]:[REQUEST_FAILED]:[{str(e)}]")
+
+                time.sleep(0.5)
+            if len(ret_list) > 1:
+                print(f"[LOOKS LIKE WE HAVE FILTERED OUT ALL ACTIVE SUB_DOMAINS]")
+            else:
+                print("[LOOKS LIKE THERE AREN'T ANY ACTIVE SUB_DOMAINS..]")
             return ret_list
         except Exception as e:
             print(f"[E]:[THE_DOMS]:[DA_MASS]:[{str(e)}]")
@@ -233,6 +243,10 @@ class The_Doms_():
             t_1 = time.time()
             print("[LAB TOOL @ HAND]:[GET_DOMS]")
             sub_list = self.da_mass(prof_dir, target_, typ_)
+            t_2 = time.time()
+            tot_ = t_2 - t_1
+            tot_i = int(tot_)
+            print(f"[THAT TOOK]:[{str(tot_i)} seconds]")
             return "DONE"
         except Exception as e:
             print(f"[E]:[THE_DOMS]:[START_FUNC]:[{str(e)}]")

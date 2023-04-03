@@ -16,6 +16,7 @@ import threading
 import ipaddress
 import time
 import requests
+import os
 
 
 class Da_Lab():
@@ -162,7 +163,7 @@ class Da_Lab():
             time.sleep(0.2)
             print(" ~ [(-O: Enable OS detection ) <- (requires root)]")
             time.sleep(0.2)
-            print(" ~ [(-6: Enable IPv6 scanning) <- (usually needed when using 'https://')]")
+            print(" ~ [(-6: Enable IPv6 scanning) <- (usually found when using 'https://')]")
             flags_ = input("[FLAGS]:(optional): ")
             time.sleep(0.5)
             try:
