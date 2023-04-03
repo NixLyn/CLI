@@ -14,6 +14,7 @@ import time
     # ? SQL
     # ? SMTP/POP3
     # ? SSL/TLS
+    # ? WEBMIN
     # ? etc
 
 class NetMap():
@@ -37,21 +38,19 @@ class NetMap():
     # FILTER - PORTS [TCP(s)]
     # ! ONLY_TCP
     def get_tcp(self, data_str):
-        print("\n-- -- [FILTERING_TCP]")
+
+        print("\n-- [FILTERING_NMAP_FOR_PORTS]")
         data = data_str.split(" ")
-        time.sleep(5)
         try:
-            print("\n--*-- -- [FILTERING_TCP]")
+            print("\n-- -- [GETTING PORTS]")
             ret_data = []
             for index in data:
-                #print("[NET_MAP_INDEX]:",str(index))
                 if "/tcp" in str(index):
                     pudding = str(index.split("\n")[1])[:-4]
-                    print(f"[TCP]::[{str(index)}]")
-                    print(f"[PUDDIN']::[{str(pudding)}]")
+                    #print(f"[INDEX]::[{str(index)}]")
+                    print(f"[*]:[PORT]::[{str(pudding)}]")
                     if str(pudding) not in str(ret_data):
                         ret_data.append(str(pudding))
-            time.sleep(5)
             return ret_data
         except Exception as e:
             print(f"[E]:[GET_TCP]:[{str(e)}]")
@@ -61,23 +60,32 @@ class NetMap():
     def og_scan(self, type_, host_, file_dir, flags_, params_):
         try:
             tcp_ = []
-            print(f"[RUNNING]:[NET_MAP]:[>{type_}<]")
+            to_save_ = ""
+            if flags_:
+                print(f"[FLAGS]:[{flags_}]")
             to_run      = "nmap -A "+flags_+" "+host_
+            print(f"[RUNNING]:[> {to_run} <]")
             nmap_return = subprocess.getoutput(to_run)
-            self.FM.save_scan(file_dir, f"nmap_scan_.csv", nmap_return)
+            self.FM.save_scan(file_dir, f"nmap_scan_{type_}.csv", nmap_return)
             print("[NET_MAP]:[SAVED]")
             tcp_ = self.get_tcp(nmap_return)
-            print("[OG_SCAN-TCP_]:",str(tcp_))
-            self.FM.write_file(file_dir+f"/nmap_tcp_.csv", tcp_, ",", "w")
+            print("..[OG_SCAN-TCP_]:",str(tcp_))
+            for p_ in tcp_:
+                to_save_ += str(p_)+","
+
+            print("[PORTS_TO_SAVE]:", to_save_)
+
+            self.FM.write_file(file_dir+f"/nmap_ports_.csv", to_save_, "", "w")
+
             #self.FM.save_scan(file_dir, f"nmap_tcp_{type_}.csv", tcp_)
-            print("[TCP]:[SAVED]")
+            print("[PORTS]:[SAVED]")
             #if params_:
             #    par_ = self.get_param(nmap_return, params_)
             #    self.FM.save_scan(file_dir, "nmap_paras.csv", nmap_return)
             #    print("[PARAMS]:[SAVED]")
             #    return par_
             #else:
-            return tcp_
+            return to_save_
         except Exception as e:
             print(f"[E]:[OG_NMAP]:[>{str(e)}<]")
 

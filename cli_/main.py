@@ -1,19 +1,25 @@
 # LOCAL
 from File_man import File_Man
+from micro_scans import MicroScans
+
+from da_lab import Da_Lab
 
 
 # SYS_BASE
+import subprocess
 import sys
 import threading
 import ipaddress
 import time
+import os
 
 
 class TestCase_0():
     def __init__(self, **kw):
         super(TestCase_0, self).__init__(**kw)
         self.FM         = File_Man()
-
+        self.MS         = MicroScans()
+        self.DL         = Da_Lab()
 
     # ! BUILD PROFILE
     def make_profile(self, tar_type, tar_val, port_, l_host, l_port, f_name):
@@ -69,12 +75,14 @@ class TestCase_0():
                 type_   = input("[TARGET_TYPE]\n[IP/URL]: ")
                 if "URL" in type_:
                     print("[<< GREAT >>]\n(Since it is a >URL<; we can run a few different types of scans such as [Amass, GoBuster, etc], which we can't do with just an IPv4)\n[..    ]")
+                    print("[(please do not use 'https://' or 'www.', as we will aply those where needed.. )]")
                 if "IP" in type_:
                     print("[<< GOOD >>]\n(You have already determined the exact IP address of your target, so we can start scanning info using tools such as [nmap, whois, etc])\n[..    ]")
 
 
                 if not type_:
                     type_ = "IP"
+
                 target_ = input("[TAR_VAL]: ")
                 if not target_:
                     print("[MUST_HAVE_TARGET]\n[TRY_AGAIN]\n")
@@ -112,7 +120,9 @@ class TestCase_0():
                 time.sleep(1.5)
                 print(f"[TAR_TYPE]:[>{str(type_)}<]")
                 time.sleep(1.5)
-                print(f"[TAR_VAL]:[>{str(IP_)}<]")
+                print(f"[TAR_VAL]:[>{str(target_)}<]")
+                time.sleep(1.5)
+                print(f"[IP_VAL]:[>{str(IP_)}<]")
                 time.sleep(1.5)
                 print(f"[Re_PORT]:[>{str(port_)}<]")
                 time.sleep(1.5)
@@ -124,7 +134,8 @@ class TestCase_0():
 
                 print("[NOW YOU CAN EITHER GO BACK HOME OR OPEN THE TARGET PROFILE]")
                 time.sleep(1.5)
-                opt_ = int(input("[OPTIONS](INT_ONLY):\n-[1]:[HOME]\n-[2]:[OPEN]"))
+                print("[OPTIONS](INT_ONLY):\n-[1]:[OPEN LAB]\n-[2]:[BACK]\n")
+                opt_ = int(input("[OPT_]: "))
                 time.sleep(1.5)
                 print(f"[SELECTED]:[{str(opt_)}]")
                 if type(opt_) != int:
@@ -139,9 +150,8 @@ class TestCase_0():
                     time.sleep(1.1)
                     return
                 if opt_ == 1:
-                    return
-                if opt_ == 2:
                     self.open_prof(prof_dir)
+                if opt_ == 2:
                     return
         except Exception as e:
             print(f"[E]:[TEST_CASE]:[MAIN]:[>{str(e)}<]")
@@ -158,34 +168,37 @@ class TestCase_0():
             tar_ip = ""
             re_port = ""
             for i, d_ in enumerate(prof_data):
-                print(f"[{str(i)}]:[{str(str(d_).replace("\n", ""))}]")
-                if "TYPE" in str(d_):
-                    typ_ = str(str(d_).replace("[TAR_TYPE]:[>", "")[:-2])
-                if "TAR_VAL" in str(d_):
-                    tar_val = str(str(d_).replace("[TAR_VAL]:[>", "")[:-2])
-                if "IP_VAL" in str(d_):
-                    tar_ip = str(str(d_).replace("[IP_VAL]:[>", "")[:-2])
-                if "Re_PORT" in str(d_):
-                    re_port = str(str(d_).replace("[TAR_VAL]:[>", "")[:-2])
+                d_a = str(str(d_).replace("\n", ""))
+                #print(f"[{str(i)}]:[{d_a}]")
+                if "TYPE" in str(d_a):
+                    typ_ = str(str(d_a).replace("[TAR_TYPE]:[>", "")[:-2])
+                    print(f"[TYPE]:[-{typ_}-]")
+                if "TAR_VAL" in str(d_a):
+                    tar_val = str(str(d_a).replace("[TAR_VAL]:[>", "")[:-2])
+                    print(f"[TAR_VAL]:[-{tar_val}-]")
+                if "IP_VAL" in str(d_a):
+                    tar_ip = str(str(d_a).replace("[IP_VAL]:[>", "")[:-2])
+                    print(f"[TAR_IP]:[-{tar_ip}-]")
+                if "Re_PORT" in str(d_a):
+                    re_port = str(str(d_a).replace("[TAR_VAL]:[>", "")[:-2])
+                    if len(re_port) > 0:
+                        print(f"[Re_PORTS]:[{re_port}]")
+                    else:
+                        print("[NO PORTS EXCLUDE]")
 
 
 
 
-            # @ @ SCAN TARGET
-            # @ @ LISTEN_ TARGET
-            # @ @ ATTACK TARGET
+            # @ @ SCAN TARGET -> ENUMERATE THE BASICS
             print("[LET'S SEE WHAT WE CAN DO WITH OUR TARGET]")
             if "URL" in typ_:
                 print("[THIS TARGET IS SET AS A URL_BASE]")
-                print(f"[>{tar_val}<]")
+
+                print(f"[DOMAIN]:[>{tar_val}<]")
                 if tar_ip:
                     print(f"[AND AN IP OF]:[{tar_ip}]")
-                print("\n[LOOKS LIKE WE CAN START BREAKING DOWN]:\n")
-                time.sleep(1.5)
-                print(">> [SUB_DOMAINS]\n")
-                time.sleep(1.5)
-                print(">> [DIRECTORIES]\n")
-                time.sleep(1.5)
+                print("\n[LOOKS LIKE WE CAN START oPENING OUR LAB SPACE]:\n")
+
 
             if "IP" in typ_:
                 print("[THIS TARGET IS SET AS A IP_BASE]")
@@ -196,26 +209,24 @@ class TestCase_0():
                 time.sleep(1.5)
                 print("[WE CAN ALSO 'SNIFF' SOME DATA TRAFFIC :P ]")
                 time.sleep(1.5)
-            print("[ALL COMING NEXT UP]")
-            time.sleep(1.3)
-            print("[..]")
-            time.sleep(1.2)
-            print("[LoL]")
-            time.sleep(1.1)
+
 
             print("\n$$$$$$$$$$$$$$$")
             print("[WONDERFUL]\n~[LOOKS LIKE WE'RE READY FOR SOME ACTION]")
             time.sleep(1)
             print("[.  ]")
-            time.sleep(1.2)
+            time.sleep(0.2)
             print("[.. ]")
-            time.sleep(1.4)
+            time.sleep(0.4)
             print("[...]")
-            time.sleep(1.6)
-            print("[GO!]")
+            time.sleep(0.6)
+            print("[OPENING_LAB]")
 
             # ! OFF TO THE LAB_OPTS ! #
-
+            try:
+                self.DL.open_lab(tar_val, typ_, prof_dir)
+            except:
+                print("[OH_SHIT]:[LAB IS ON FIRE]")
 
 
         except Exception as e:
@@ -242,7 +253,7 @@ class TestCase_0():
                     print(f"[SELECTED TARGET PROFILE]:[>{str(prof_name)}<]")
                     print(f"[OPTIONS]:\
                             \n~[1]:[VIEW PROFILE]\
-                            \n~[2]:[OPEN PROFILE]\
+                            \n~[2]:[OPEN LAB]\
                             \n~[3]:[CREATE NEW]\
                             \n~[4]:[CLONE PROFILE]\
                             \n~[5]:[RENAME PROFILE]\
@@ -259,15 +270,17 @@ class TestCase_0():
                             return
 
                         # ? RENAME
+                        # TODO
                         if opt_ == 5:
-                            print("[RENAME_SELECTED]")
+                            print("[RENAME_SELECTED]:[todo]")
                             new_name = input("[NEW TARGET PROFILE NAME]: ")
                             print(f"[RENAMING]:[>{str(prof_name)}<]:[TO]:[>{str(new_name)}<]")
                             #self.FM.rename_dir(old, new)
 
                         # ? CLONE
+                        # TODO
                         if opt_ == 4:
-                            print("[CLONE_SELECTED]")
+                            print("[CLONE_SELECTED]:[todo]")
                             clone_name = input("[CLONE TARGET PROFILE NAME]: ")
                             print(f"[CLONING]:[>{str(prof_name)}<]:[TO]:[>{str(clone_name)}<]")
                             #self.FM.clone_dir(old, new)
@@ -312,11 +325,12 @@ class TestCase_0():
             file_list = self.FM.file_list(prof_dir)
             for i, f_ in enumerate(file_list):
                 print(f"[{str(i)}]:[{str(f_)}]")
-            opt_ = input('[OPTIONS](INT_ONLY):\
+            print('[OPTIONS](INT_ONLY):\
                         \n-[1]:[DISPLAY FILE]\
-                        \n-[2]:[OPEN PROFILE]\
+                        \n-[2]:[OPEN LAB]\
                         \n-[3]:[BACK]\
                         ')
+            opt_ = int(input("[OPT_]: "))
             print(f"[SELECTED]:[{str(opt_)}]")
             if type(opt_) != int:
                 print("[DUDE.. INT_ONLY]")
@@ -331,7 +345,8 @@ class TestCase_0():
                     print(f"[E]:[COLLECTING FILE DATA]:[{str(e)}]")
             if opt_ == 2:
                 self.open_prof(prof_dir)
-                
+            if opt_ == 3:
+                return
         except Exception as e:
             print(f"[E]:[CLI]:[DISPLAY_PROF]:[>{str(e)}<]")
             return False
@@ -339,28 +354,34 @@ class TestCase_0():
 
     # ! GET STARTED HERE..
     def main(self):
+        os.system('cls||clear')
+        print("\n")
         print('#######################################################################################')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('#######################################################################################')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###      _______   ____ _____ ____  _____      _____ ____   ____    _______   ____  ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###      %N_.N|    /N/   %I/   \X\   /X%       /L%    \Y\   %Y/     %N_.N|    /N%   ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###     %N/ |N|   /N/   %I/     \X\V/X%       /L%      \Y\_%Y/     %N/ |N|   /N%    ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###    %N/  |N|  /N/   %I/       >|X|<       /L%        \YVY/     %N/  |N|  /N%     ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###   %N/   |N|_/N/   %I/       /X%^\X\     /L%____.     \Y/     %N/   |N|_/N%      ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('###  %N/    |N  N/   %I/       /X%   \X\   /L_L_L_L]     |Y|    %N/    |N  N%       ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('### ~~~~   ~~~~~~~~ ~~~~~    ~~~~~~ ~~~~~ ~~~~~~~~~~    ~~~~~ ~~~~~   ~~~~~~~~      ###')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('#######################################################################################')
-        time.sleep(0.5)
+        time.sleep(0.1)
         print('#######################################################################################\n\n')
-        time.sleep(0.8)
+        time.sleep(0.2)
+        print("[WARNING]:[WEIRD GUY HUMOUR]\n")
+        print("[(please keep in mind the tools used in this educational cli are really *LOUD*)]")
+        print("[(is it *NOT* recommended to use this for real world purpose)]")
+        print("[(even with VPN, tors, or whatever...)]\n")
 
         try:
             while True:
