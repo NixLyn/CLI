@@ -1,0 +1,19 @@
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-04-03 15:46 SAST
+Nmap scan report for tesla.com (23.201.26.71)
+Host is up (0.30s latency).
+Other addresses for tesla.com (not scanned): 23.9.66.10 104.89.118.48 96.16.108.43 23.218.192.46
+rDNS record for 23.201.26.71: a23-201-26-71.deploy.static.akamaitechnologies.com
+Not shown: 998 filtered tcp ports (no-response)
+PORT    STATE SERVICE  VERSION
+80/tcp  open  http     AkamaiGHost (Akamai's HTTP Acceleration/Mirror service)
+|_http-title: Access Denied
+443/tcp open  ssl/http AkamaiGHost (Akamai's HTTP Acceleration/Mirror service)
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=*.tesla.com/organizationName=TESLA, INC./stateOrProvinceName=Texas/countryName=US
+| Subject Alternative Name: DNS:*.tesla.com, DNS:tesla.com
+| Not valid before: 2023-03-20T00:00:00
+|_Not valid after:  2024-03-21T23:59:59
+|_http-title: Access Denied
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 243.63 seconds

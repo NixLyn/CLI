@@ -79,9 +79,9 @@ class The_Doms_():
             local_ = prof_dir+f"/busts_{uri_}/sub_busts/subs.csv"
             self.FM.write_file(local_, "", "", "w+")
             if "https" not in uri_:
-                to_run = f"gobuster dir -u https://{uri_} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt > {local_}"
+                to_run = f"gobuster dir -u https://{uri_} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -o {local_} -q"
             else:
-                to_run = f"gobuster dir -u {uri_} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt > {local_}"
+                to_run = f"gobuster dir -u {uri_} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -o {local_} -q"
             print(f"[TO_BUST]:[{uri_}]")
 
             ret_bust = subprocess.getoutput(to_run)
